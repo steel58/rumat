@@ -25,18 +25,6 @@ fn det(mat: Vec<Vec<isize>>) -> isize {
         1 => -mat[0][i] * det(cut_column(&topless, i)),
         _ => panic!(),
     })
-    //let mut sub_mat;
-    //let mut sum = 0;
-    //for i in 0..len {
-    //    sub_mat = cut_column(&topless, i);
-    //    
-    //    sum += match i % 2 {
-    //        0 => mat[0][i] * det(sub_mat),
-    //        1 => -mat[0][i] * det(sub_mat),
-    //        _ => panic!(),
-    //    };
-    //}
-    //sum
 }
 
 fn cut_row(mat: &Vec<Vec<isize>>, index: usize) -> Vec<Vec<isize>> {
@@ -65,6 +53,7 @@ fn main() {
     let mat_a = vec![vec_a, vec_b, vec_c, vec_d];
     let ans = det(mat_a); //2007
     println!("{}", ans);
+//Testing Git, woo hoo!
 //    while running {
 //        todo!();
 //    }
