@@ -1,3 +1,5 @@
+use scanf::scanf;
+
 fn id(n: usize) -> Vec<Vec<f32>>{
     let mut result = vec![vec![0.;n]; n];
 
@@ -98,6 +100,20 @@ fn add_vec(vec_a: Vec<f32>, vec_b: Vec<f32>) -> Vec<f32> {
     result
 }
 
+enum Commands {
+    Quit,
+    Unknown,
+}
+
+fn get_command(input: String) -> Commands {
+    if input == "quit" || input == "q" {
+        Commands::Quit
+    } else {
+        Commands::Unknown
+    }
+}
+
+
 fn main() {
     let vec_a = vec![1., -3., 4., 6.];
     let vec_b = vec![4., 5., -2., 1.];
@@ -107,4 +123,27 @@ fn main() {
         vec_b.to_owned(), 
         vec_c.to_owned(), 
         vec_d.to_owned()];
+
+    let mut running = true;
+    let mut input = String::new();
+    let mut command: Commands;
+
+    while running {
+        println!("Testing 123");
+        print!("    > ");
+        if scanf!("{}", input).is_ok() {
+            command = get_command(input.to_owned());
+            match command {
+                Commands::Quit => {
+                    running = false;
+                    println!("Now exiting.");
+                }
+                Commands::Unknown => {
+                    println!("Your command was unknown, please try again");
+                }
+            }
+        } else {
+            println!("Error, not a valid input. Please try again");
+        }
+    }
 }
