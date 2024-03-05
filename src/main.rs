@@ -1,4 +1,4 @@
-fn eye(n: usize) -> Vec<Vec<f32>>{
+fn id(n: usize) -> Vec<Vec<f32>>{
     let mut result = vec![vec![0.;n]; n];
 
     for i in 0..n {
@@ -107,5 +107,4 @@ fn main() {
         vec_b.to_owned(), 
         vec_c.to_owned(), 
         vec_d.to_owned()];
-    let ans = det(mat_a); //2007
 }
