@@ -1,4 +1,6 @@
 use scanf::scanf;
+mod data_type;
+mod mat_opps;
 
 fn id(n: usize) -> Vec<Vec<f32>>{
     let mut result = vec![vec![0.;n]; n];
@@ -103,16 +105,28 @@ fn add_vec(vec_a: Vec<f32>, vec_b: Vec<f32>) -> Vec<f32> {
 enum Commands {
     Quit,
     Unknown,
+    Dot,
+    Cross,
+    Det,
+    Diag,
+    Id,
 }
+
+struct Variable (String, data_type::Type);
 
 fn get_command(input: String) -> Commands {
     if input == "quit" || input == "q" {
         Commands::Quit
+    } else if false {
+        Commands::Dot
     } else {
         Commands::Unknown
     }
 }
 
+fn arg_type(arg: String) -> data_type::Type {
+    todo!();
+}
 
 fn main() {
     let vec_a = vec![1., -3., 4., 6.];
@@ -124,23 +138,43 @@ fn main() {
         vec_c.to_owned(), 
         vec_d.to_owned()];
 
-    let mut running = true;
-    let mut input = String::new();
+    let mat_b = mat_opps::id(5);
+
+    let mat_c = add_mat(mat_a, mat_b);
+    let mut running: bool = true;
     let mut command: Commands;
+    let mut args: Vec<String> = Vec::new();
+    let mut in_str: String = String::new();
+
+    println!("{:?}", vec_new);
 
     while running {
+        in_str = String::new();
+
         println!("Testing 123");
         print!("    > ");
-        if scanf!("{}", input).is_ok() {
-            command = get_command(input.to_owned());
+        if scanf!("{}", in_str).is_ok() {
+            command = get_command(in_str.to_owned());
+
             match command {
                 Commands::Quit => {
                     running = false;
                     println!("Now exiting.");
-                }
+                },
                 Commands::Unknown => {
                     println!("Your command was unknown, please try again");
-                }
+                },
+                Commands::Dot => {
+                    if args.len() != 2 {
+                        println!("Invalid number of Args");
+                    }
+                
+                },
+                Commands::Cross => {
+                },
+                Commands::Det => {},
+                Commands::Diag => {},
+                Commands::Id => {},
             }
         } else {
             println!("Error, not a valid input. Please try again");
