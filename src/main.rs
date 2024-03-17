@@ -19,7 +19,7 @@ enum Commands {
 #[derive(Debug)]
 struct Variable (String, data_type::Type);
 
-fn get_command(input: String) -> Commands {
+fn get_command(input: &String) -> Commands {
     let parts: Vec<&str> = input.split(" ").collect();
     
     if parts[0] == "quit" || parts[0] == "q" {
@@ -85,13 +85,22 @@ fn arg_type(arg: Vec<&str>) -> Type {
         return Type::String(string);
     } 
 
-    if valid_parens(&string) && string.chars().nth(0).unwrap_or(' ') == '[' {
-        if string.chars().nth(1).unwrap_or(' ') == '[' {
+    let no_space: String = string.chars().filter(|c| *c != ' ').collect();
+
+    if valid_parens(&no_space) && no_space.chars().nth(0).unwrap_or(' ') == '[' {
+        if no_space.chars().nth(1).unwrap_or(' ') == '[' {
             //Matrix
             todo!();
         } else {
             //Vec
-            todo!();
+            let csv: String = no_space.chars()
+                .filter(|c| *c != ']' || *c != '[')
+                .collect();
+
+            let vector: Vec<f64> = csv.split(',')
+                .map(|val| val.parse::<f64>().unwrap_or(0.0))
+                .collect(); 
+            return Type::Vector(vector);
         }
     }
 
@@ -117,6 +126,7 @@ fn main() {
     let mut running: bool = true;
     let mut command: Commands;
     let mut in_str: String;
+    let mut prepped_str: String;
     let mut variables: Vec<Variable> = Vec::new();
 
     while running {
@@ -125,7 +135,8 @@ fn main() {
         println!("Testing 123");
         print!("    > ");
         if scanf!("{}", in_str).is_ok() {
-            command = get_command(in_str.to_owned());
+            prepped_str = in_str.trim().chars().collect();
+            command = get_command(&prepped_str);
 
             match command {
                 Commands::Quit => {
@@ -141,7 +152,7 @@ fn main() {
                 Commands::Diag => {},
                 Commands::Id => {},
                 Commands::Build => {
-                    build_variable(in_str, &mut variables);
+                    build_variable(prepped_str, &mut variables);
                 },
             }
         } else {
