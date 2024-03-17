@@ -1,10 +1,12 @@
+use crate::det;
+
 #[derive(Debug)]
 pub enum Type {
-    Number (f32),
+    Number (f64),
     Bool (bool),
     String (String),
-    Vector (Vec<f32>),
-    Matrix (Vec<Vec<f32>>),
+    Vector (Vec<f64>),
+    Matrix (Vec<Vec<f64>>),
     Error (String),
 }
 
@@ -21,8 +23,8 @@ impl Type {
     }
 
     pub fn vec_add(&self, vec_b: Type) -> Self {
-        let mut vec_1: Vec<f32>; 
-        let mut vec_2: Vec<f32>; 
+        let mut vec_1: Vec<f64>; 
+        let mut vec_2: Vec<f64>; 
 
         if let Self::Vector(vec) = self {
             vec_1 = vec.to_owned();
@@ -46,8 +48,8 @@ impl Type {
     }
 
     pub fn num_add(&self, num_b: Type) -> Self {
-        let mut num_1: f32;
-        let mut num_2: f32;
+        let mut num_1: f64;
+        let mut num_2: f64;
         
         if let Self::Number(num) = self {
             num_1 = num.to_owned();
@@ -64,10 +66,11 @@ impl Type {
     }
 
     pub fn mat_add(&self, mat_2: Type) -> Self {
-        let mut mat_a: Vec<Vec<f32>>;
-        let mut mat_b: Vec<Vec<f32>>;
+        let mut mat_a: Vec<Vec<f64>>;
+        let mut mat_b: Vec<Vec<f64>>;
         
         if let Self::Matrix(mat) = self {
+
             mat_a = mat.to_owned();
         } else {
             return Type::Error("One or more matracies are invalid.".to_string());
@@ -95,4 +98,25 @@ impl Type {
         }
         return Type::Matrix(result);
     }
+
+
+    pub fn det(&self) -> Type {
+        let mat: Vec<Vec<f64>>;
+        if let Self::Matrix(m) = self {
+            mat = m.to_owned();
+        } else { 
+            return Type::Error("Cannot take determinant of non-matrix type".to_owned());
+        }
+
+        let len = mat.len();
+        if mat[0].len() != len {
+            return Type::Error("Matrix must be square for determinant".to_owned());
+        }
+
+        let result: f64 = det(mat);
+        return Type::Number(result);
+        
+    }
+
+
 }

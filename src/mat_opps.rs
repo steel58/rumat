@@ -1,4 +1,4 @@
-pub fn id(n: usize) -> Vec<Vec<f32>>{
+pub fn id(n: usize) -> Vec<Vec<f64>>{
     let mut result = vec![vec![0.;n]; n];
 
     for i in 0..n {
@@ -8,7 +8,7 @@ pub fn id(n: usize) -> Vec<Vec<f32>>{
     result
 }
 
-pub fn diag(size: usize, shift: isize) -> Vec<Vec<f32>> {
+pub fn diag(size: usize, shift: isize) -> Vec<Vec<f64>> {
     let mut result = vec![vec![0.; size]; size];
     
     for i in 0..(size- shift.abs() as usize) {
@@ -22,11 +22,11 @@ pub fn diag(size: usize, shift: isize) -> Vec<Vec<f32>> {
     result
 }
 
-pub fn dot(vec_1: &Vec<f32>, vec_2: &Vec<f32>) -> f32 {
+pub fn dot(vec_1: &Vec<f64>, vec_2: &Vec<f64>) -> f64 {
     vec_1.iter().zip(vec_2.iter()).fold(0., |acc, (a,b)| acc + a * b) 
 }
 
-fn det(mat: Vec<Vec<f32>>) -> f32 {
+pub fn det(mat: Vec<Vec<f64>>) -> f64 {
     let len = mat.len();
     if len == 2 {
         return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]
@@ -41,7 +41,7 @@ fn det(mat: Vec<Vec<f32>>) -> f32 {
     })
 }
 
-pub fn cross(vec_a: Vec<f32>, vec_b: Vec<f32>) -> Vec<f32> {
+pub fn cross(vec_a: Vec<f64>, vec_b: Vec<f64>) -> Vec<f64> {
     let mut result = Vec::new();
     let topless = vec![vec_a, vec_b];
     for i in 0..topless.len() {
@@ -54,15 +54,15 @@ pub fn cross(vec_a: Vec<f32>, vec_b: Vec<f32>) -> Vec<f32> {
     result
 }
 
-pub fn cut_row(mat: Vec<Vec<f32>>, index: usize) -> Vec<Vec<f32>> {
+pub fn cut_row(mat: Vec<Vec<f64>>, index: usize) -> Vec<Vec<f64>> {
     let mut result = mat.to_owned();
     result.remove(index);
     result
 }
 
-pub fn cut_column(mat: &Vec<Vec<f32>>, index: usize) -> Vec<Vec<f32>> {
-    let mut result: Vec<Vec<f32>> = Vec::new();
-    let mut next_row: Vec<f32>;
+pub fn cut_column(mat: &Vec<Vec<f64>>, index: usize) -> Vec<Vec<f64>> {
+    let mut result: Vec<Vec<f64>> = Vec::new();
+    let mut next_row: Vec<f64>;
     for row in mat.iter() {
         next_row = row.to_owned(); 
         next_row.remove(index);
@@ -71,7 +71,7 @@ pub fn cut_column(mat: &Vec<Vec<f32>>, index: usize) -> Vec<Vec<f32>> {
     result
 }
 
-pub fn add_mat(mat_a: Vec<Vec<f32>>, mat_b: Vec<Vec<f32>>) -> Vec<Vec<f32>> {
+pub fn add_mat(mat_a: Vec<Vec<f64>>, mat_b: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let width = mat_a.len();
     let height = mat_a[0].len();
     if mat_b.len() != width || mat_b[0].len() != height {
@@ -86,7 +86,7 @@ pub fn add_mat(mat_a: Vec<Vec<f32>>, mat_b: Vec<Vec<f32>>) -> Vec<Vec<f32>> {
     result
 }
 
-pub fn add_vec(vec_a: Vec<f32>, vec_b: Vec<f32>) -> Vec<f32> {
+pub fn add_vec(vec_a: Vec<f64>, vec_b: Vec<f64>) -> Vec<f64> {
     let len = vec_a.len();
     if vec_b.len() != len {
         panic!();
