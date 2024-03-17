@@ -10,6 +10,20 @@ pub enum Type {
     Error (String),
 }
 
+
+impl PartialEq<Type> for Type {
+    fn eq(&self, other: &Type) -> bool {
+         match (self, other) {
+            (Self::Number(a), Self::Number(b)) => {a == b},
+            (Self::Bool(a), Self::Bool(b)) => {a == b},
+            (Self::String(a), Self::String(b)) => {a == b},
+            (Self::Vector(a), Self::Vector(b)) => {a == b},
+            (Self::Matrix(a), Self::Matrix(b)) => {a == b},
+            _ => false,
+        }
+    }
+}
+
 impl Type {
     pub fn add(&self, other: Type) -> Type{
         match self {

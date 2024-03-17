@@ -65,7 +65,7 @@ fn build_variable(input: String, var_list: &mut Vec<Variable>) {
 
 
 fn arg_type(arg: Vec<&str>) -> Type {
-    let invalid =Type::Error("Entered data was not a recognized type.".to_string());
+    let invalid = Type::Error("Entered data was not a recognized type.".to_string());
     let first: String = arg[0].to_string();
     if arg.len() == 1 {
         if first == "true" {
@@ -90,7 +90,17 @@ fn arg_type(arg: Vec<&str>) -> Type {
     if valid_parens(&no_space) && no_space.chars().nth(0).unwrap_or(' ') == '[' {
         if no_space.chars().nth(1).unwrap_or(' ') == '[' {
             //Matrix
-            todo!();
+            let rows: Vec<String> = no_space.split('[')
+                .map(|str| str.chars().take(str.len() - 1).collect())
+                .collect();
+            let elements: Vec<Vec<f64>> = rows.iter()
+                .map(|r| r.split(',')
+                     .map(|val| val.parse::<f64>()
+                          .unwrap_or(0.0 ))
+                     .collect())
+                .collect();
+
+            return Type::Matrix(elements);
         } else {
             //Vec
             let csv: String = no_space.chars()
@@ -100,6 +110,7 @@ fn arg_type(arg: Vec<&str>) -> Type {
             let vector: Vec<f64> = csv.split(',')
                 .map(|val| val.parse::<f64>().unwrap_or(0.0))
                 .collect(); 
+
             return Type::Vector(vector);
         }
     }
