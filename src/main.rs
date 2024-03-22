@@ -4,7 +4,7 @@ mod mat_opps;
 mod tests;
 use crate::mat_opps::*;
 use crate::data_type::*;
-
+use std::fmt;
 
 enum Commands {
     Quit,
@@ -14,12 +14,17 @@ enum Commands {
     Det,
     Diag,
     Id,
-    Thing,
     Build,
 }
 
 #[derive(Debug)]
 struct Variable (String, data_type::Type);
+
+impl fmt::Display for Variable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} = {}", self.0, self.1)
+    }
+}
 
 fn get_command(input: &String) -> Commands {
     let parts: Vec<&str> = input.split(" ").collect();
@@ -62,6 +67,8 @@ fn build_variable(input: String, var_list: &mut Vec<Variable>) {
     let value = arg_type(data);
     let new_var = Variable::new(parts[1], value);
 
+    println!("\n      {}\n", new_var);
+
     var_list.push(new_var);
 }
 
@@ -84,7 +91,12 @@ fn arg_type(arg: Vec<&str>) -> Type {
         .collect();
 
     if first.chars().nth(0).unwrap_or(' ') == '"' {
-        return Type::String(string);
+        let pure_string: Vec<String> = string.split('"')
+            .map(|x| x.to_string())
+            .collect();
+        let final_str = pure_string.iter().nth(1).unwrap();
+
+        return Type::String(final_str.to_owned());
     } 
 
     let no_space: String = string.chars().filter(|c| *c != ' ').collect();
@@ -93,7 +105,7 @@ fn arg_type(arg: Vec<&str>) -> Type {
         if no_space.chars().nth(1).unwrap_or(' ') == '[' {
             //Matrix
             let rows: Vec<String> = no_space.split('[')
-                .map(|str| str.chars().take(str.len() - 1).collect())
+                .map(|mut str| {str.to_string().pop(); str.to_string()})
                 .collect();
             let elements: Vec<Vec<f64>> = rows.iter()
                 .map(|r| r.split(',')
@@ -105,9 +117,10 @@ fn arg_type(arg: Vec<&str>) -> Type {
             return Type::Matrix(elements);
         } else {
             //Vec
-            let csv: String = no_space.chars()
-                .filter(|c| *c != ']' || *c != '[')
-                .collect();
+            let csv: String = no_space
+                .trim_matches('[')
+                .trim_matches(']')
+                .to_string();
 
             let vector: Vec<f64> = csv.split(',')
                 .map(|val| val.parse::<f64>().unwrap_or(0.0))
@@ -117,7 +130,7 @@ fn arg_type(arg: Vec<&str>) -> Type {
         }
     }
 
-    return invalid;
+    invalid
 }
 
 fn valid_parens(string: &String) -> bool {
@@ -132,7 +145,7 @@ fn valid_parens(string: &String) -> bool {
             return false;
         }
     }
-    return true;
+    return count == 0;
 }
 
 fn main() {
@@ -145,7 +158,6 @@ fn main() {
     while running {
         in_str = String::new();
 
-        println!("Testing 123");
         print!("    > ");
         if scanf!("{}", in_str).is_ok() {
             prepped_str = in_str.trim().chars().collect();
