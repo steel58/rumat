@@ -5,6 +5,7 @@ mod tests;
 use crate::mat_opps::*;
 use crate::data_type::*;
 
+
 enum Commands {
     Quit,
     Unknown,
@@ -13,6 +14,7 @@ enum Commands {
     Det,
     Diag,
     Id,
+    Thing,
     Build,
 }
 
