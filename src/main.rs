@@ -22,7 +22,7 @@ struct Variable (String, data_type::Type);
 
 impl fmt::Display for Variable {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} = {}", self.0, self.1)
+        write!(f, "{} = {:?}", self.0, self.1)
     }
 }
 
@@ -105,10 +105,14 @@ fn arg_type(arg: Vec<&str>) -> Type {
         if no_space.chars().nth(1).unwrap_or(' ') == '[' {
             //Matrix
             let rows: Vec<String> = no_space.split('[')
-                .map(|mut str| {str.to_string().pop(); str.to_string()})
+                .filter(|r| !r.is_empty()) 
+                .map(|str| str.chars()
+                     .filter(|c| *c != ']')
+                     .collect())
                 .collect();
             let elements: Vec<Vec<f64>> = rows.iter()
                 .map(|r| r.split(',')
+                     .filter(|elem| !elem.is_empty())
                      .map(|val| val.parse::<f64>()
                           .unwrap_or(0.0 ))
                      .collect())

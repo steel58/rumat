@@ -76,6 +76,8 @@ mod tests {
         let input = format!("let test_name = {}", string); 
 
         build_variable(input, &mut var_list);
-        assert_eq!(var_list[0].1, Type::Vector(vec![4., 6., 7.4, -6.]));
+        assert_eq!(var_list[0].1, Type::Matrix(
+                vec![vec![4., 6., 7.4, -6.], 
+                vec![6., -7.6545, 23., 0.123]]));
     }    
 }
