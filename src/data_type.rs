@@ -1,4 +1,4 @@
-use crate::det;
+use core::f64;
 
 #[derive(Debug)]
 pub enum Type {
@@ -17,8 +17,8 @@ impl PartialEq<Type> for Type {
             (Self::Number(a), Self::Number(b)) => {a == b},
             (Self::Bool(a), Self::Bool(b)) => {a == b},
             (Self::String(a), Self::String(b)) => {a == b},
-            (Self::Vector(a, sza), Self::Vector(b, szb)) => {a == b},
-            (Self::Matrix(a, sza), Self::Matrix(b, szb)) => {a == b},
+            (Self::Vector(a, _), Self::Vector(b, _)) => {a == b},
+            (Self::Matrix(a, _), Self::Matrix(b, _)) => {a == b},
             _ => false,
         }
     }
@@ -37,12 +37,12 @@ impl Type {
     }
 
     pub fn vec_add(&self, vec_b: Type) -> Self {
-        let mut vec_1: Vec<f64>; 
+        let vec_1: Vec<f64>; 
         let sza: usize; 
-        let mut vec_2: Vec<f64>;
+        let vec_2: Vec<f64>;
         let szb: usize;
 
-        let mut vec_2: Vec<f64>; if let Self::Vector(vec, sz) = self {
+        if let Self::Vector(vec, sz) = self {
             vec_1 = vec.to_owned();
             sza = sz.to_owned();
         } else {
@@ -66,8 +66,8 @@ impl Type {
     }
 
     pub fn num_add(&self, num_b: Type) -> Self {
-        let mut num_1: f64;
-        let mut num_2: f64;
+        let num_1: f64;
+        let num_2: f64;
         
         if let Self::Number(num) = self {
             num_1 = num.to_owned();
@@ -84,9 +84,9 @@ impl Type {
     }
 
     pub fn mat_add(&self, mat_2: Type) -> Self {
-        let mut mat_a: Vec<Vec<f64>>;
+        let mat_a: Vec<Vec<f64>>;
         let sza: (usize, usize);
-        let mut mat_b: Vec<Vec<f64>>;
+        let mat_b: Vec<Vec<f64>>;
         let szb: (usize, usize);
         
         if let Self::Matrix(mat, sz) = self {
@@ -106,7 +106,7 @@ impl Type {
         let width = mat_a.len();
         let height = mat_a[0].len();
 
-        if mat_b.len() != width || mat_b[0].len() != height {
+        if sza.0 != szb.0 || sza.1 != szb.1 {
             return Type::Error("Cannot add matracies of differing sizes.".to_string());
         }
 
@@ -131,8 +131,7 @@ impl Type {
             return Type::Error("Cannot take determinant of non-matrix type".to_owned());
         }
 
-        let len = mat.len();
-        if mat[0].len() != len {
+        if sz.0 != sz.1 {
             return Type::Error("Matrix must be square for determinant".to_owned());
         }
 
@@ -152,4 +151,65 @@ impl Type {
         }
     }
 
+    pub fn cross(&self, vec_2: Self) -> Self {
+        let mut result = Vec::new();
+        let vec_a: Vec<f64>;
+        let vec_b: Vec<f64>;
+
+        if let Self::Vector(vec, _) = self {
+            vec_a = vec.to_owned();
+        } else {
+            return Self::Error("Data not found.".to_string());
+        }
+        if let Self::Vector(vec, _) = vec_2 {
+            vec_b = vec;
+        } else {
+            return Self::Error("Data not found.".to_string());
+        }
+
+        let topless = vec![vec_a, vec_b];
+        for i in 0..topless.len() {
+            result.push(match i % 2 {
+                0 => det(cut_column(&topless, i)),
+                1 => -det(cut_column(&topless, i)),
+                _ => panic!(),
+            });
+        }
+        Self::Vector(result, 3)
+    }
+
+}
+
+
+//Private functions 
+fn det(mat: Vec<Vec<f64>>) -> f64 {
+    let len = mat.len();
+    if len == 2 {
+        return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]
+    };
+
+    let topless = cut_row(mat.to_owned(), 0);
+    
+    (0..len).fold(0., |acc, i| acc + match i % 2 {
+        0 => mat[0][i] * det(cut_column(&topless, i)),
+        1 => -mat[0][i] * det(cut_column(&topless, i)),
+        _ => panic!(),
+    })
+}
+
+fn cut_row(mat: Vec<Vec<f64>>, index: usize) -> Vec<Vec<f64>> {
+    let mut result = mat.to_owned();
+    result.remove(index);
+    result
+}
+
+fn cut_column(mat: &Vec<Vec<f64>>, index: usize) -> Vec<Vec<f64>> {
+    let mut result: Vec<Vec<f64>> = Vec::new();
+    let mut next_row: Vec<f64>;
+    for row in mat.iter() {
+        next_row = row.to_owned(); 
+        next_row.remove(index);
+        result.push(next_row);
+    }
+    result
 }
