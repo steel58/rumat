@@ -11,7 +11,7 @@ mod tests {
             vec![-34., 55.,-7., 103.],
             vec![4.345, 52., 17., 39.],
             vec![58.43,65.234, 7.43, 3.974],
-        ]);
+        ], (4, 4));
         let answer: f64 = -725176.73344;
         let calc = mat.det(); 
         if let Type::Number(calculation) = calc {
@@ -66,7 +66,7 @@ mod tests {
         let input = format!("let test_name = {}", string); 
 
         build_variable(input, &mut var_list);
-        assert_eq!(var_list[0].1, Type::Vector(vec![4., 6., 7.4, -6.]));
+        assert_eq!(var_list[0].1, Type::Vector(vec![4., 6., 7.4, -6.], 4));
     }
 
     #[test]
@@ -78,6 +78,7 @@ mod tests {
         build_variable(input, &mut var_list);
         assert_eq!(var_list[0].1, Type::Matrix(
                 vec![vec![4., 6., 7.4, -6.], 
-                vec![6., -7.6545, 23., 0.123]]));
+                vec![6., -7.6545, 23., 0.123]],
+                (2, 4)));
     }    
 }

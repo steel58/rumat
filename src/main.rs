@@ -118,7 +118,9 @@ fn arg_type(arg: Vec<&str>) -> Type {
                      .collect())
                 .collect();
 
-            return Type::Matrix(elements);
+            return Type::Matrix(elements.clone(), 
+                                (elements.len(), 
+                                 elements[0].len()));
         } else {
             //Vec
             let csv: String = no_space
@@ -130,7 +132,7 @@ fn arg_type(arg: Vec<&str>) -> Type {
                 .map(|val| val.parse::<f64>().unwrap_or(0.0))
                 .collect(); 
 
-            return Type::Vector(vector);
+            return Type::Vector(vector.clone(), vector.len());
         }
     }
 
